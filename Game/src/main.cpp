@@ -4,6 +4,7 @@
 #include "FranLib.h"
 #include "pichlib.h"
 #include "mgtv_lib.h"
+#include "PierpaLib.h"
 
 using namespace mgtv_lib;
 
