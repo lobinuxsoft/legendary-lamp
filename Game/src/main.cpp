@@ -8,10 +8,30 @@
 
 using namespace mgtv_lib;
 
+#pragma region VARIABLES
+
+bool isGamePlaying = true;
+
+Texture2D texture;
+Button* button1;
+Button* button2;
+Button* button3;
+
+#pragma endregion
+
+
+#pragma region METHODS DECLARATIONS
 
 void verifyClickOnButtons(Button* b1, Button* b2, Button* b3);
 void updateButtons(Button* b1, Button* b2, Button* b3);
 void drawButtons(Button* b1, Button* b2, Button* b3);
+
+void InitGame();
+void UnloadGame();
+
+#pragma endregion
+
+#pragma region METHODS DEFINITIONS
 
 void Run()
 {
@@ -22,20 +42,13 @@ void Run()
 	//gameIcon = LoadImage(gameIconUrl);
 	//SetWindowIcon(gameIcon);
 
-	//InitGame();
+	InitGame();
 
-	SetTargetFPS(60);
-	//--------------------------------------------------------------------------------------
-	Texture2D texture = loadTexture("bojji.png");
-
-	Button* button1 = new Button(300.0f, 125.0f, 75.0f, WRITTEN_OPTION::QUIT, RED);
-	Button* button2 = new Button(125.0f, 325.0f, 75.0f, WRITTEN_OPTION::YES, LIME);
-	Button* button3 = new Button(475.0f, 325.0f, 75.0f, WRITTEN_OPTION::NO, DARKGREEN);
 	button2->disable();
 	button3->disable();
 
 	// Main game loop
-	while (!WindowShouldClose())    // Detect window close button or ESC key
+	while (!WindowShouldClose() && isGamePlaying)    // Detect window close button or ESC key
 	{
 		verifyClickOnButtons(button1, button2, button3); // Verifica acciones con el mouse.
 		updateButtons(button1, button2, button3); // Actualiza el estado de los botones.
@@ -44,6 +57,7 @@ void Run()
 		ClearBackground(BLACK);
 
 		drawButtons(button1, button2, button3); // Dibuja los botones.
+
 		// Update and Draw
 		//----------------------------------------------------------------------------------
 		//UpdateDrawGameFrame();
@@ -53,17 +67,10 @@ void Run()
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------
-	//UnloadGame();         // Unload loaded data (textures, sounds, models...)
+	UnloadGame();         // Unload loaded data (textures, sounds, models...)
 
 	CloseWindow();        // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
-}
-
-
-
-void main()
-{
-	Run();
 }
 
 void verifyClickOnButtons(Button* b1, Button* b2, Button* b3)
@@ -74,11 +81,12 @@ void verifyClickOnButtons(Button* b1, Button* b2, Button* b3)
 		b2->enable();
 		b3->enable();
 	}
+
 	if (b2->wasClicked())
 	{
-		CloseWindow();
-		exit(0);
+		isGamePlaying = false;
 	}
+
 	if (b3->wasClicked())
 	{
 		b1->enable();
@@ -97,4 +105,30 @@ void drawButtons(Button* b1, Button* b2, Button* b3)
 	b1->draw();
 	b2->draw();
 	b3->draw();
+}
+
+void InitGame()
+{
+	SetTargetFPS(60);
+	//--------------------------------------------------------------------------------------
+	texture = loadTexture("bojji.png");
+
+	button1 = new Button(300.0f, 125.0f, 75.0f, WRITTEN_OPTION::QUIT, RED);
+	button2 = new Button(125.0f, 325.0f, 75.0f, WRITTEN_OPTION::YES, LIME);
+	button3 = new Button(475.0f, 325.0f, 75.0f, WRITTEN_OPTION::NO, DARKGREEN);
+}
+
+void UnloadGame()
+{
+	UnloadTexture(texture);
+	delete button1;
+	delete button2;
+	delete button3;
+}
+
+#pragma endregion
+
+void main()
+{
+	Run();
 }
